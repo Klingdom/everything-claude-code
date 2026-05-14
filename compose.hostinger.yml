@@ -1,0 +1,37 @@
+## compose.hostinger.yml — Hostinger Docker Compose panel deploy
+##
+## Paste this YAML (or its raw URL) into Hostinger's Docker Compose
+## editor. It builds the image directly from the GitHub repo so the
+## target host does not need this repo cloned locally.
+##
+## In the Hostinger panel, set these environment variables:
+##   ANTHROPIC_API_KEY=sk-ant-...                  (required)
+##   TRADINGAGENTS_LLM_PROVIDER=anthropic          (optional, default shown)
+##   TRADINGAGENTS_DEEP_THINK_LLM=claude-opus-4-7  (optional)
+##   TRADINGAGENTS_QUICK_THINK_LLM=claude-haiku-4-5 (optional)
+##
+## After deploy, SSH to the VPS and use the interactive CLI:
+##   docker compose -f /path/to/compose.hostinger.yml exec tradingagents tradingagents
+##
+## The container is kept alive with `sleep infinity` so you can exec
+## into it on demand. Persisted state (decision log, checkpoints)
+## lives in the named volume tradingagents_data.
+
+services:
+  tradingagents:
+    build:
+      context: https://github.com/Klingdom/everything-claude-code.git#feature/tradingagents:tradingagents
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?ANTHROPIC_API_KEY is required}
+      TRADINGAGENTS_LLM_PROVIDER: ${TRADINGAGENTS_LLM_PROVIDER:-anthropic}
+      TRADINGAGENTS_DEEP_THINK_LLM: ${TRADINGAGENTS_DEEP_THINK_LLM:-claude-opus-4-7}
+      TRADINGAGENTS_QUICK_THINK_LLM: ${TRADINGAGENTS_QUICK_THINK_LLM:-claude-haiku-4-5}
+    entrypoint: ["sleep", "infinity"]
+    volumes:
+      - tradingagents_data:/home/appuser/.tradingagents
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+
+volumes:
+  tradingagents_data:

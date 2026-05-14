@@ -1,0 +1,28 @@
+## docker-compose.yml — Local development for the TradingAgents add-on
+##
+## Use this after cloning the repo locally:
+##   cp .env.example .env       # set ANTHROPIC_API_KEY
+##   docker compose build
+##   docker compose run --rm tradingagents
+##
+## For Hostinger panel-based deploys, use compose.hostinger.yml instead —
+## it builds from a remote git context and does not need this repo cloned
+## on the target host.
+
+services:
+  tradingagents:
+    build:
+      context: ./tradingagents
+    env_file:
+      - .env
+    environment:
+      TRADINGAGENTS_LLM_PROVIDER: ${TRADINGAGENTS_LLM_PROVIDER:-anthropic}
+      TRADINGAGENTS_DEEP_THINK_LLM: ${TRADINGAGENTS_DEEP_THINK_LLM:-claude-opus-4-7}
+      TRADINGAGENTS_QUICK_THINK_LLM: ${TRADINGAGENTS_QUICK_THINK_LLM:-claude-haiku-4-5}
+    volumes:
+      - tradingagents_data:/home/appuser/.tradingagents
+    tty: true
+    stdin_open: true
+
+volumes:
+  tradingagents_data:
