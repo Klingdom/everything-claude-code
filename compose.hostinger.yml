@@ -20,7 +20,7 @@
 services:
   tradingagents:
     build:
-      context: https://github.com/Klingdom/everything-claude-code.git#feature/tradingagents:tradingagents
+      context: https://github.com/Klingdom/everything-claude-code.git#main:tradingagents
     environment:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?ANTHROPIC_API_KEY is required}
       TRADINGAGENTS_LLM_PROVIDER: ${TRADINGAGENTS_LLM_PROVIDER:-anthropic}
